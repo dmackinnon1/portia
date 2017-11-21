@@ -1,6 +1,8 @@
 import random
-# Functions for generating Portia Cask puzzles and solutions.
+# Functions for generating Portia Casket puzzles and solutions.
+# run script to generate portia_data.json
 
+#-------------------------
 # a range of possible 'pointers' to caskets
 def casketPointers(n):
     pointers = []
@@ -107,7 +109,14 @@ def printPuzzle(results):
     print("There are " + str(len(caskets)) + " caskets with these inscriptions:")
     printCasketStatements(caskets)
     print("There are exactly " + str(truths) + " true inscriptions.")
-    print("   solution: The portrait is in  cask " + str(position))
+    print("   solution: The portrait is in  casket " + str(position))
+
+def json(puzzleDef):
+    result  = "{caskets: "
+    result += str(puzzleDef[0])
+    result += ", truths: " + str(puzzleDef[1])
+    result += ", solution: " + str(puzzleDef[2]) + "}"
+    return result
     
 # generates all sequences of length n using elements from
 # the provided list
@@ -137,14 +146,25 @@ def generateAllPuzzles(n):
     cp = casketPointers(n)
     allPossible = allSequences(n, cp)
     counter = 0
+    result = "data = {\n"
+    first = True
     for i in allPossible:
         results = check(i)
         counter += len(results)
         for j in results:
-            printPuzzle(j)
+            if not first:
+                result += ","
+                result += "\n"
+            first = False
+            result += "\t"
+            result += json(j)
+    result += "\n};"
     print("generated " + str(counter) + " puzzles")
+    return result;
 
 #
 # using the puzzle generator
 #
-generateAllPuzzles(3)
+f = open("portia_data.json","w")
+f.write(generateAllPuzzles(3))
+f.close()
