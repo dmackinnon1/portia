@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="js/portia.js"></script>
+<title>Portia's Caskets</title>
+</head>
+<style>
+
+ul {
+	padding-left: 40px;
+	list-style-type: none;
+}
+
+li {
+	padding-bottom: 10px;
+}
+
+table, tr {
+	padding: 4px;
+	text-align: center;
+    border: 1px solid black;
+    border-collapse: collapse; 
+    margin: auto;
+}
+
+th, td {
+	padding: 4px;
+}
+
+.buttonDiv {
+	display: inline-block;
+	padding: 2px;
+	border: 2px;
+}
+.centered {
+	text-align: center;
+}
+
+</style>
+<script>
+let puzzles = [];
+let selectedPuzzle = null;
+$(document).ready(function(){
+	console.log("about to fetch remote data");
+	$.getJSON("data/portia1.json", function(data){
+		puzzles = data;
+		console.log(puzzles);
+	}).done(function() {
+		reset();
+	});
+});
+
+$(document).ready(function(){
+	console.log('initializing controllers');
+	$("#resetButton").on("click", function(){
+		reset();
+	});
+	$("#reasoningButton").on("click", function(){
+		showSolution();
+	});
+	
+});
+
+function formatPuzzle(p) {
+	let pd =  document.getElementById("puzzleDescription");
+	let text = portiaICasketText(p.caskets);
+	text += "<br>";
+	text += portiaIRiddleText(p.truths);
+	pd.innerHTML = text;
+	
+}
+
+function showSolution() {
+	let rd = document.getElementById("reasoningDisplay");
+	rd.innerHTML = "The portrait is in caseket " + selectedPuzzle.solution +".";
+}
+
+function reset() {
+	selectedPuzzle = randomElement(puzzles);
+	formatPuzzle(selectedPuzzle);
+	let rd = document.getElementById("reasoningDisplay");
+	rd.innerHTML = "";
+}
+
+</script>
+
+<body>
+
+<nav class="navbar navbar-default" style="margin-bottom:0px">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="..">
+				<img src="imgs/github_badge1.png" style="max-width:100%;max-height:100%" >
+			</a>
+			<p class="navbar-text navbar-right">
+				<a href=".." class="navbar-link">dmackinnon1.github.io</a>
+			</p>
+		</div>
+		</div>
+</nav>
+
+<div class="container-fluid">
+	<div class='row'>
+	<div class='col-sm-1'></div>
+	<div class='col-sm-10'>
+	<div class="page-header">
+		<h1>Portia's Caskets</h1>
+	</div> 		
+
+	<p>
+	An introductory paragraph about Portia's Caskets.
+	</p>
+	<hr>
+	<div class="centered">
+		<div class="btn-group btn-group-md " role="group"> 
+  			<button type="button" id="portia_i" class="puzzleTypeBtn btn btn-primary">Portia I</button>
+  			<button type="button" id="portia_ii" class="puzzleTypeBtn btn btn-secondary">Portia II</button>
+  			<button type="button" id="portia_iii" class="puzzleTypeBtn btn btn-secondary">Poria IIi</button>
+ 		</div>
+	</div>
+	<hr>
+	<p> Here is your puzzle: </p>
+	<div id="puzzleDescription"></div>	
+	<hr>
+	<p>
+	General Instructions
+	</p>
+	<hr>
+	
+	<div id="caskDisplay" class="centered" style="text-align=center"></div>
+	<br>
+	<div id="solutionDisplay"></div>	
+	<hr>
+	<div id="reasoningButtonHolder">
+		<button type="button" id="reasoningButton" class="btn btn-secondary typeButton">Show Reasoning</span></button>
+	</div>
+	<div id="reasoningDisplay"></div>
+	<hr>
+	<div id="resetButtonHolder">
+		<button type="button" id="resetButton", class="btn btn-secondary typeButton">New Puzzle</span></button>
+	</div>
+	<br>
+	<br>
+
+</div>
+	<div class='col-sm-1'></div>
+</div>
+
+</div>
+</body>
+</html>
