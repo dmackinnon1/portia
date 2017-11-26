@@ -273,15 +273,19 @@ def generateAllPuzzlesPortia2(n):
 #
 # using the puzzle generator
 #
+print('-------------------------------------')
 print('Generating Portia I data.')
 print(' --- creating file ../data/portia1.json')
 f = open("../data/portia1.json","w")
 f.write(generateAllPuzzlesPortia1(3))
 f.close()
 print(' --- completed writing out Portia I data.')
+print('-------------------------------------')
+print("Generating Portia II data.")
 print(' --- creating file ../data/portia2.json')
 f = open("../data/portia2.json","w")
 f.write(generateAllPuzzlesPortia2(3))
 f.close()
 print(' --- completed writing out Portia II data.')
+print('-------------------------------------')
 
