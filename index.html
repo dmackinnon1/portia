@@ -50,10 +50,16 @@ th, td {
 </style>
 <script>
 
+let portia1_puzzles = [];
+let portia2_puzzles = [];
+let portia3_puzzles = [];
 $(document).ready(function(){
 	console.log("about to fetch remote data");
+	$.getJSON("data/portia2.json", function(data){
+		portia2_puzzles = data;
+	})
 	$.getJSON("data/portia1.json", function(data){
-		portia.puzzles = data;
+		portia1_puzzles = data;
 	}).done(function() {
 		reset();
 	});
@@ -64,15 +70,32 @@ $(document).ready(function(){
 	$("#resetButton").on("click", function(){
 		reset();
 	});
+	/*
 	$("#reasoningButton").on("click", function(){
 		showSolution();
 	});
-	
+	*/	
 	display.result = document.getElementById("solutionDisplay");
-	display.reasoning =document.getElementById("reasoningDisplay");
+});
+
+function setButtons() {
+		$(".btn-primary").addClass("btn-secondary");
+		$(".btn-primary").removeClass("btn-primary");
+		$("#" + portia.version).addClass("btn-primary");
+		$("#" + portia.version).removeClass("btn-secondary");
+		};
+
+$(document).ready(function(){	
+	$('.puzzleTypeBtn').on("click", function(event){
+		portia.version = parseInt(event.currentTarget.id);
+		console.log("portia puzzle type: " + portia.version);
+		setButtons();
+		reset();
+	});
 });
 
 function formatPuzzle(p) {
+	console.log(p);
 	let pd =  document.getElementById("puzzleDescription");
 	let cd =  document.getElementById("caskDisplay");
 	let text = "<br>";
@@ -84,15 +107,22 @@ function formatPuzzle(p) {
 	
 }
 
+/*
 function showSolution() {
 	let rd = document.getElementById("reasoningDisplay");
-	rd.innerHTML = "The portrait is in caseket " + portia.selected.solution +".";
+	rd.innerHTML = "The portrait is in casket " + portia.selected.solution +".";
 }
-
+*/
 function reset() {
+	if (portia.version === 1){
+		portia.puzzles = portia1_puzzles;
+	} else if (portia.version === 2){
+		portia.puzzles = portia2_puzzles;
+	} else {
+		portia.puzzles = portia3_puzzles;
+	}
 	portia.selected = randomElement(portia.puzzles);
 	formatPuzzle(portia.selected);	
-	display.reasoning.innerHTML = "";
 	portia.answered = false;
 	portia.chosen = -1;
 	updateResult();
@@ -129,9 +159,9 @@ function reset() {
 	<hr>
 	<div class="centered">
 		<div class="btn-group btn-group-md " role="group"> 
-  			<button type="button" id="portia_i" class="puzzleTypeBtn btn btn-primary">Portia I</button>
-  			<button type="button" id="portia_ii" class="puzzleTypeBtn btn btn-secondary">Portia II</button>
-  			<button type="button" id="portia_iii" class="puzzleTypeBtn btn btn-secondary">Poria IIi</button>
+  			<button type="button" id="1" class="puzzleTypeBtn btn btn-primary">Portia I</button>
+  			<button type="button" id="2" class="puzzleTypeBtn btn btn-secondary">Portia II</button>
+  			<button type="button" id="3" class="puzzleTypeBtn btn btn-secondary">Portia III</button>
  		</div>
 	</div>
 	<hr>
@@ -141,11 +171,13 @@ function reset() {
 	<div id="caskDisplay" class="centered" style="text-align=center"></div>
 	<br>
 	<div id="solutionDisplay"></div>	
+	<!--
 	<hr>
 	<div id="reasoningButtonHolder">
 		<button type="button" id="reasoningButton" class="btn btn-secondary typeButton">Show Reasoning</span></button>
 	</div>
 	<div id="reasoningDisplay"></div>
+	-->
 	<hr>
 	<div id="resetButtonHolder">
 		<button type="button" id="resetButton", class="btn btn-secondary typeButton">New Puzzle</span></button>

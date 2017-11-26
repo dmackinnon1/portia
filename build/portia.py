@@ -39,24 +39,61 @@ def initialTruthSequence(n):
 
 # this computes the truth sequence for
 # a given list of casket pointers
+# the truth sequence for a pointerSequence:
+# for each position in the truth sequence,
+# it is the count of how many pointers
+# are true if the portrait is in that position.
 def truthForPointers(pointerSequence):
     n = len(pointerSequence)
     c = caskets(n)
     truthSequence = initialTruthSequence(n)
     for i in c:
         for j in pointerSequence:
-            if  i == j :
-                truthSequence[i-1] = truthSequence[i-1] +1
-            if j < 0 :
-                if i != -1*j:
-                    truthSequence[i-1] = truthSequence[i-1] +1   
+            truthSequence[i-1] += truthAtPointer(i,j)
     return truthSequence
 
+def truthAtPointer(p, pointer):
+    if p == pointer :
+        return 1
+    if pointer < 0:
+        if p != -1*pointer:
+            return 1        
+    return 0
+            
 # checks to see of all truth counts
 # are distinct
 def allDistinct(truthSequence):
     reduced = set(truthSequence)
     return len(reduced) == len(truthSequence)
+
+# in portia2, we want to know how many true statements
+# are on each casket for a given position
+def truthForPointers2(pointerSequence1, pointerSequence2):
+    n = len(pointerSequence1)
+    c = caskets(n)
+    truthVector = []   
+    for i in c:
+        truthAti = []
+        for j in range(n):
+            truthCount = truthAtPointer(i, pointerSequence1[j])
+            truthCount += truthAtPointer(i, pointerSequence2[j])
+            truthAti.append(truthCount)
+        truthVector.append(truthAti)
+    #print(truthVector)
+    return truthVector
+
+def isDerrangement(v1, v2):
+    count = 0;
+    for i in v1:
+        if i in v2:
+            count += 1
+    return count == len(v1)        
+
+def notDerrangementInList(d, list):
+    for c in list:
+        if isDerrangement(d,c):
+            return False 
+    return True
 
 # checks to see which truth counts
 # are distinct
@@ -89,7 +126,7 @@ def printCasketStatements(caskets):
 
 # a set of 3 tuples are returned
 # the three tuples include 1 caskets, 2 #truths, 1 postion
-def check(caskets):
+def checkForPortia1(caskets):
     t = truthForPointers(caskets)
     d = whichDistinct(t)
     results = []
@@ -101,6 +138,26 @@ def check(caskets):
         p.append(t[i-1])
         p.append(i)
         results.append(p)    
+    return results
+
+def checkForPortia2(casketTuple):
+    casketSet1 = casketTuple[0]
+    casketSet2 = casketTuple[1]
+    #print(casketTuple)
+    solutionList = []
+    t = truthForPointers2(casketSet1, casketSet2)
+    for i in range(len(t)) :
+        remaining = list(t)
+        remaining.remove(t[i])
+        if notDerrangementInList(t[i],remaining):
+            solutionList.append(i)
+    results = []    
+    for i in solutionList:
+        p = []
+        p.append(casketTuple)
+        p.append(t[i])
+        p.append(i+1)
+        results.append(p)
     return results
 
 def printPuzzle(results):
@@ -119,7 +176,15 @@ def json(puzzleDef):
     result += ", \"truths\": " + str(puzzleDef[1])
     result += ", \"solution\": " + str(puzzleDef[2]) + "}"
     return result
-    
+
+def json2(puzzleDef):
+    result  = "{\"caskets\": ["
+    result += str(puzzleDef[0][0])
+    result += ", "
+    result += str(puzzleDef[0][1])
+    result += "], \"truths\": " + str(puzzleDef[1])
+    result += ", \"solution\": " + str(puzzleDef[2]) + "}"
+    return result
 # generates all sequences of length n using elements from
 # the provided list
 def allSequences(n, elements):
@@ -143,15 +208,34 @@ def appendTo(elements, listOfLists):
             newList.append(nl)
     return newList
 
-# will generate all puzzles on n caskets                           
-def generateAllPuzzles(n):
+def allNoMatchSequencePairs(n, elements): 
+    pairs = []
+    sequences = allSequences(n, elements)
+    decreasing = list(sequences)
+    for s in sequences :
+        decreasing.remove(s)
+        for t in decreasing :            
+            if noMatch(s,t):
+                pairs.append((s,t))
+    return pairs
+
+def noMatch(l1, l2):
+    result = True
+    for i in range(len(l1)) :
+        if l1[i] == l2[i] :
+            result = False 
+    return result
+
+
+# will generate all puzzles on n caskets for Portia I                          
+def generateAllPuzzlesPortia1(n):
     cp = casketPointers(n)
     allPossible = allSequences(n, cp)
     counter = 0
     result = "[\n"
     first = True
     for i in allPossible:
-        results = check(i)
+        results = checkForPortia1(i)
         counter += len(results)
         for j in results:
             if not first:
@@ -164,12 +248,40 @@ def generateAllPuzzles(n):
     print("generated " + str(counter) + " puzzles")
     return result;
 
+
+# will generate all puzzles on n caskets for Portia I                          
+def generateAllPuzzlesPortia2(n):
+    cp = casketPointers(n)
+    allPossible = allNoMatchSequencePairs(n, cp)
+    counter = 0
+    result = "[\n"
+    first = True
+    for i in allPossible:
+        results = checkForPortia2(i)
+        counter += len(results)
+        for j in results:
+            if not first:
+                result += ","
+                result += "\n"
+            first = False
+            result += "\t"
+            result += json2(j)
+    result += "\n]"
+    print("generated " + str(counter) + " puzzles")
+    return result;
+
 #
 # using the puzzle generator
 #
 print('Generating Portia I data.')
 print(' --- creating file ../data/portia1.json')
 f = open("../data/portia1.json","w")
-f.write(generateAllPuzzles(3))
+f.write(generateAllPuzzlesPortia1(3))
 f.close()
 print(' --- completed writing out Portia I data.')
+print(' --- creating file ../data/portia2.json')
+f = open("../data/portia2.json","w")
+f.write(generateAllPuzzlesPortia2(3))
+f.close()
+print(' --- completed writing out Portia II data.')
+
