@@ -1,4 +1,13 @@
 
+let portia = {};
+portia.puzzles = [];
+portia.selected = null;
+portia.answered = false;
+portia.chosen = -1;
+
+let display = {};
+display.result = null;
+
 function portiaICasketText(pointerArray) {
 	let text = [];
 	let p = 0;
@@ -6,7 +15,7 @@ function portiaICasketText(pointerArray) {
 		text.push(textForPointer(parseInt(pointerArray[p]),parseInt(p)+1));
 	}
 	return text;
-};
+}
 
 function portiaIRiddleText(truths) {
 	let t = parseInt(truths);
@@ -16,6 +25,74 @@ function portiaIRiddleText(truths) {
 		return "There is only one true statement on the caskets.";
 	}
 	return "There are " + truths + " true statements on the caskets."
+}
+
+function htmlforCakets(pointerArray) {
+	let html = "<table>";
+	html += "<tr>"
+	let txt = portiaICasketText(pointerArray);
+	let i = 0;
+	for (i in txt) {
+		html += "<td> Casket " + (parseInt(i) + 1) + "</td>";
+	}
+	html += "</tr><tr>";
+	for (i in txt) {
+		html += "<td id='casket_" + (parseInt(i) + 1) + "' >" + openCasket() + "</td>";
+	}
+	html += "</tr><tr>";
+	for (i in txt) {
+		html += "<td>"+ txt[i] +"</td>"
+	}
+	html += "</tr><tr>";
+	for (i in txt) {
+		html += "<td>"+ htmlForButton(parseInt(i) + 1) + "</td>"
+	}
+	html += "</tr></table>";
+	return html;
+}
+
+function htmlForButton(index) {
+	html = "<button type='button' id='solve_"+ index +"' " ;
+	html += " onclick='cellClick(event)'";
+	html += " data-index='" + index + "'"
+	html += " class='btn btn-secondary typeButton'>Select</span></button>";
+	return html;
+}
+
+function cellClick(event) {
+	if (portia.answered) return;
+	let index = parseInt(event.target.getAttribute("data-index"));
+	portia.chosen = index;
+	let cell = document.getElementById( "casket_" + index);
+	console.log("selected: " + cell);
+	if (index === parseInt(portia.selected.solution)) {
+		console.log("correct casket chosen");
+		cell.innerHTML = "";
+		cell.innerHTML = successCasket();
+	} else {
+		console.log("incorrect casket chosen");
+		cellinnerHTML = "";
+		cell.innerHTML = failCasket();
+	}
+	portia.answered = true;
+	updateResult();
+}
+
+
+function updateResult(){
+	if (portia.answered) {
+		display.result.innerHTML = solutionText();
+	} else {
+		display.result.innerHTML = "";
+	}
+}
+
+function solutionText() {
+	if (portia.chosen === parseInt(portia.selected.solution)) {
+		return "You chose wisely.";
+	} else {
+		return "You did not choose wisely.";
+	}
 }
 
 function textForPointer(pointer, currentIndex) {

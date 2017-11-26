@@ -7,12 +7,14 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="js/portia.js"></script>
+<script src="js/caskets.js"></script>
 <title>Portia's Caskets</title>
 </head>
 <style>
 
 ul {
 	padding-left: 40px;
+
 	list-style-type: none;
 }
 
@@ -29,7 +31,7 @@ table, tr {
 }
 
 th, td {
-	padding: 4px;
+	padding: 10px;
 }
 
 .buttonDiv {
@@ -41,15 +43,17 @@ th, td {
 	text-align: center;
 }
 
+.puzzle-text {
+	font-style: italic;
+	font-size: large;
+}
 </style>
 <script>
-let puzzles = [];
-let selectedPuzzle = null;
+
 $(document).ready(function(){
 	console.log("about to fetch remote data");
 	$.getJSON("data/portia1.json", function(data){
-		puzzles = data;
-		console.log(puzzles);
+		portia.puzzles = data;
 	}).done(function() {
 		reset();
 	});
@@ -64,27 +68,34 @@ $(document).ready(function(){
 		showSolution();
 	});
 	
+	display.result = document.getElementById("solutionDisplay");
+	display.reasoning =document.getElementById("reasoningDisplay");
 });
 
 function formatPuzzle(p) {
 	let pd =  document.getElementById("puzzleDescription");
-	let text = portiaICasketText(p.caskets);
-	text += "<br>";
+	let cd =  document.getElementById("caskDisplay");
+	let text = "<br>";
 	text += portiaIRiddleText(p.truths);
+	text += "<br>";
 	pd.innerHTML = text;
+	let text2 = htmlforCakets(p.caskets);
+	cd.innerHTML = text2;
 	
 }
 
 function showSolution() {
 	let rd = document.getElementById("reasoningDisplay");
-	rd.innerHTML = "The portrait is in caseket " + selectedPuzzle.solution +".";
+	rd.innerHTML = "The portrait is in caseket " + portia.selected.solution +".";
 }
 
 function reset() {
-	selectedPuzzle = randomElement(puzzles);
-	formatPuzzle(selectedPuzzle);
-	let rd = document.getElementById("reasoningDisplay");
-	rd.innerHTML = "";
+	portia.selected = randomElement(portia.puzzles);
+	formatPuzzle(portia.selected);	
+	display.reasoning.innerHTML = "";
+	portia.answered = false;
+	portia.chosen = -1;
+	updateResult();
 }
 
 </script>
@@ -124,14 +135,9 @@ function reset() {
  		</div>
 	</div>
 	<hr>
-	<p> Here is your puzzle: </p>
-	<div id="puzzleDescription"></div>	
+	<p> Portia says: </p>
+	<div id="puzzleDescription" class='puzzle-text'></div>	
 	<hr>
-	<p>
-	General Instructions
-	</p>
-	<hr>
-	
 	<div id="caskDisplay" class="centered" style="text-align=center"></div>
 	<br>
 	<div id="solutionDisplay"></div>	
