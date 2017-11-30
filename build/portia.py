@@ -170,20 +170,22 @@ def printPuzzle(results):
     print("There are exactly " + str(truths) + " true inscriptions.")
     print("   solution: The portrait is in  casket " + str(position))
 
-def json(puzzleDef):
+def json(puzzleDef, counter):
     result  = "{\"caskets\": "
     result += str(puzzleDef[0])
     result += ", \"truths\": " + str(puzzleDef[1])
-    result += ", \"solution\": " + str(puzzleDef[2]) + "}"
+    result += ", \"solution\": " + str(puzzleDef[2])
+    result += ", \"id\": " + "\"portia1-" + str(counter)+ "\"}"        
     return result
 
-def json2(puzzleDef):
+def json2(puzzleDef, counter):
     result  = "{\"caskets\": ["
     result += str(puzzleDef[0][0])
     result += ", "
     result += str(puzzleDef[0][1])
     result += "], \"truths\": " + str(puzzleDef[1])
-    result += ", \"solution\": " + str(puzzleDef[2]) + "}"
+    result += ", \"solution\": " + str(puzzleDef[2]) 
+    result += ", \"id\": " + "\"portia2-" + str(counter)+ "\"}"
     return result
 # generates all sequences of length n using elements from
 # the provided list
@@ -243,13 +245,13 @@ def generateAllPuzzlesPortia1(n):
                 result += "\n"
             first = False
             result += "\t"
-            result += json(j)
+            result += json(j, counter)
     result += "\n]"
     print("generated " + str(counter) + " puzzles")
     return result;
 
 
-# will generate all puzzles on n caskets for Portia I                          
+# will generate all puzzles on n caskets for Portia II                          
 def generateAllPuzzlesPortia2(n):
     cp = casketPointers(n)
     allPossible = allNoMatchSequencePairs(n, cp)
@@ -265,10 +267,35 @@ def generateAllPuzzlesPortia2(n):
                 result += "\n"
             first = False
             result += "\t"
-            result += json2(j)
+            result += json2(j, counter)
     result += "\n]"
     print("generated " + str(counter) + " puzzles")
     return result;
+
+
+# will generate all puzzles on n caskets for Portia III                         
+#def generateAllPuzzlesPortia2(n):
+#   cp = casketPointers(n)
+#  allPossible = allSequences(n, cp)
+#    counter = 0
+#    result = "[\n"
+#    first = True
+#    for i in allPossible:
+#        ok = checkForPortia2(i)
+#        if ! ok continue
+#        results = resultsForPortia2(i)  
+#        counter += len(results)
+#        for j in results:
+#            if not first:
+#                result += ","
+#                result += "\n"
+#            first = False
+#            result += "\t"
+#            result += json(j, counter)
+#    result += "\n]"
+#    print("generated " + str(counter) + " puzzles")
+#    return result;
+
 
 #
 # using the puzzle generator

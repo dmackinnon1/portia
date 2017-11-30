@@ -103,6 +103,7 @@ function formatPuzzle(p) {
 	text += "<br>";
 	pd.innerHTML = text;
 	let text2 = htmlforCakets(p.caskets);
+	text2 += "<em><small>" + p.id + "</small></em>";
 	cd.innerHTML = text2;
 	
 }
@@ -154,7 +155,11 @@ function reset() {
 	</div> 		
 
 	<p>
-	An introductory paragraph about Portia's Caskets.
+	In Shakespeare's <em>The Merchant of Venice</em>, Portia tested her suitors by asking them to discover which of three caskets concealed her portrait. Inscriptions on the caskets presented riddles that would test the virtue of her potential mate. In the classic book “What is the Name of this Book?” logician Raymond Smullyan imagined several generations of clever Portias, who presented potential suitors with caskets inscribed with logic puzzles that provided the key to finding the hidden portrait.
+	</p>
+	<br>
+	<p>
+	Use this page to try your luck, and puzzle solving skills with three generations of Portias.
 	</p>
 	<hr>
 	<div class="centered">
@@ -165,12 +170,12 @@ function reset() {
  		</div>
 	</div>
 	<hr>
-	<p> Portia says: </p>
-	<div id="puzzleDescription" class='puzzle-text'></div>	
+	<p> </p>
+	<div id="puzzleDescription" class='puzzle-text centered'></div>	
 	<hr>
 	<div id="caskDisplay" class="centered" style="text-align=center"></div>
 	<br>
-	<div id="solutionDisplay"></div>	
+	<div id="solutionDisplay" class="puzzle-text centered"></div>	
 	<!--
 	<hr>
 	<div id="reasoningButtonHolder">
