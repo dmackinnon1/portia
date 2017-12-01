@@ -29,7 +29,7 @@ function textForVersion() {
 	} else {
 		text = "Portia III introduces the casket makers Bellini and Cellini. Bellini’s inscriptions are always "
 		text += "true, and Cellini’s are always false. Once you determine which caskets were made by whom, the "
-		text += "inscriptions will lead the way to the portrait."
+		text += "inscriptions will lead to the portrait."
 	}
 	return text;
 }
