@@ -58,6 +58,9 @@ $(document).ready(function(){
 	$.getJSON("data/portia2.json", function(data){
 		portia2_puzzles = data;
 	})
+	$.getJSON("data/portia3.json", function(data){
+		portia3_puzzles = data;
+	})	
 	$.getJSON("data/portia1.json", function(data){
 		portia1_puzzles = data;
 	}).done(function() {
@@ -96,16 +99,17 @@ $(document).ready(function(){
 
 function formatPuzzle(p) {
 	console.log(p);
+	let vd = document.getElementById("versionDescription");
 	let pd =  document.getElementById("puzzleDescription");
 	let cd =  document.getElementById("caskDisplay");
+	vd.innerHTML = textForVersion();
 	let text = "<br>";
-	text += portiaIRiddleText(p.truths);
+	text += portiaIRiddleText(p);
 	text += "<br>";
 	pd.innerHTML = text;
-	let text2 = htmlforCakets(p.caskets);
+	let text2 = htmlforCakets(p);
 	text2 += "<em><small>" + p.id + "</small></em>";
 	cd.innerHTML = text2;
-	
 }
 
 /*
@@ -155,11 +159,12 @@ function reset() {
 	</div> 		
 
 	<p>
-	In Shakespeare's <em>The Merchant of Venice</em>, Portia tested her suitors by asking them to discover which of three caskets concealed her portrait. Inscriptions on the caskets presented riddles that would test the virtue of her potential mate. In the classic book “What is the Name of this Book?” logician Raymond Smullyan imagined several generations of clever Portias, who presented potential suitors with caskets inscribed with logic puzzles that provided the key to finding the hidden portrait.
+	In Shakespeare's <em>The Merchant of Venice</em>, Portia vetted her suitors by asking them to uncover which of three caskets concealed her portrait. Inscriptions on the caskets presented conondrums to test the virtue of potential mates. In the classic <em>What is the Name of this Book?</em> logician Raymond Smullyan imagined several generations of clever Portias, who presented potential suitors with caskets inscribed with logic puzzles whose solutions provided the key to locating the hidden portrait.
+	Our Portias are friendly algorithms that spend their time generating logic puzzles for your enjoyment.  
 	</p>
 	<br>
 	<p>
-	Use this page to try your luck, and puzzle solving skills with three generations of Portias.
+	Use this page to try your luck, and puzzle solving skills, with three generations of Portias.
 	</p>
 	<hr>
 	<div class="centered">
@@ -170,7 +175,8 @@ function reset() {
  		</div>
 	</div>
 	<hr>
-	<p> </p>
+	<div id="versionDescription"></div>
+	<br>
 	<div id="puzzleDescription" class='puzzle-text centered'></div>	
 	<hr>
 	<div id="caskDisplay" class="centered" style="text-align=center"></div>

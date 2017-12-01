@@ -59,7 +59,15 @@ def truthAtPointer(p, pointer):
         if p != -1*pointer:
             return 1        
     return 0
-            
+
+
+def truthSequence(p, pointers):
+	n = len(pointers)
+	seq = []
+	for i in pointers:
+		seq.append(truthAtPointer(p, i))
+	return seq
+
 # checks to see of all truth counts
 # are distinct
 def allDistinct(truthSequence):
@@ -126,19 +134,59 @@ def printCasketStatements(caskets):
 
 # a set of 3 tuples are returned
 # the three tuples include 1 caskets, 2 #truths, 1 postion
-def checkForPortia1(caskets):
-    t = truthForPointers(caskets)
+def checkForPortia1(pointers):
+    t = truthForPointers(pointers)
     d = whichDistinct(t)
     results = []
     if len(d) == 0:
         return results
     for i in d:
         p = []
-        p.append(caskets)
+        p.append(pointers)
         p.append(t[i-1])
         p.append(i)
+        p.append(positionalTruth(t[i-1],t))
         results.append(p)    
     return results
+
+def positionalTruth(c, t): 
+	if c == min(t): return "min" 
+	if c == max(t): return "max"
+	return "mid"
+
+def hasPointer(i, pointers) :
+	for j in pointers:
+		if i == j : return True
+		if i == -1*j : return True
+	a = []
+	for j in pointers:
+		a.append(abs(j))
+	if len(set(a)) >1 : return True
+	return False; 
+
+def pointerList(pointers) :
+	n = len(pointers)
+	c = caskets(n)
+	results = []
+	for i in c:
+		if hasPointer(i, pointers):
+			results.append(i)
+	return results
+		
+def checkForPortia3(pointers):
+    l = pointerList(pointers)
+    results = []
+    if len(l) == 0:
+        return results
+    for i in l:
+    	for j in negateOnePerSequence(belliniCellini1(len(pointers))):
+        	p = []
+        	p.append([pointers, j])
+        	p.append(truthSequence(i, pointers))
+        	p.append(i)
+        	results.append(p)    
+    return results
+
 
 def checkForPortia2(casketTuple):
     casketSet1 = casketTuple[0]
@@ -175,6 +223,7 @@ def json(puzzleDef, counter):
     result += str(puzzleDef[0])
     result += ", \"truths\": " + str(puzzleDef[1])
     result += ", \"solution\": " + str(puzzleDef[2])
+    result += ", \"position\": \"" + puzzleDef[3] +"\"" 
     result += ", \"id\": " + "\"portia1-" + str(counter)+ "\"}"        
     return result
 
@@ -187,6 +236,17 @@ def json2(puzzleDef, counter):
     result += ", \"solution\": " + str(puzzleDef[2]) 
     result += ", \"id\": " + "\"portia2-" + str(counter)+ "\"}"
     return result
+
+def json3(puzzleDef, counter):
+    result  = "{\"caskets\": "
+    result += str(puzzleDef[0])
+    result += ", \"truths\": " + str(puzzleDef[1])
+    result += ", \"solution\": " + str(puzzleDef[2])
+    result += ", \"id\": " + "\"portia3-" + str(counter)+ "\"}"        
+    return result
+
+
+
 # generates all sequences of length n using elements from
 # the provided list
 def allSequences(n, elements):
@@ -228,6 +288,50 @@ def noMatch(l1, l2):
             result = False 
     return result
 
+def belliniCellini1(n): 
+	c = caskets(n)
+	result = []
+	cp = c[1:len(c)]
+	for j in cp:
+		result.append([j])
+	for i in cp:
+		remainders = c[:]
+		newResult = []
+		for k in result:
+			remainderk = removeAll(remainders,k)
+			remainderk = removeIfPresent(remainderk, i)
+			if len(remainderk) == 0:
+				newResult.append(k)
+			for r in remainderk: 
+				p = k[:]
+				p.append(r)
+				newResult.append(p)
+		result = newResult[:]
+	final = []
+	for i in result:
+		if len(i) == n:
+			final.append(i)
+	return final
+
+def negateOnePerSequence(sequences):
+	result = []
+	for s in sequences:
+		for i in range(len(s)):
+			r = s[:]
+			r[i] = -1*r[i]
+			result.append(r)
+	return result;
+
+def removeAll(p,d):
+	q = p[:]
+	for i in d:
+		removeIfPresent(q,i)
+	return q	
+
+def removeIfPresent(p,i):
+	if i in p: p.remove(i)
+	return p
+
 
 # will generate all puzzles on n caskets for Portia I                          
 def generateAllPuzzlesPortia1(n):
@@ -238,13 +342,13 @@ def generateAllPuzzlesPortia1(n):
     first = True
     for i in allPossible:
         results = checkForPortia1(i)
-        counter += len(results)
         for j in results:
             if not first:
                 result += ","
                 result += "\n"
             first = False
             result += "\t"
+            counter += 1
             result += json(j, counter)
     result += "\n]"
     print("generated " + str(counter) + " puzzles")
@@ -260,13 +364,13 @@ def generateAllPuzzlesPortia2(n):
     first = True
     for i in allPossible:
         results = checkForPortia2(i)
-        counter += len(results)
         for j in results:
             if not first:
                 result += ","
                 result += "\n"
             first = False
             result += "\t"
+            counter += 1
             result += json2(j, counter)
     result += "\n]"
     print("generated " + str(counter) + " puzzles")
@@ -274,27 +378,25 @@ def generateAllPuzzlesPortia2(n):
 
 
 # will generate all puzzles on n caskets for Portia III                         
-#def generateAllPuzzlesPortia2(n):
-#   cp = casketPointers(n)
-#  allPossible = allSequences(n, cp)
-#    counter = 0
-#    result = "[\n"
-#    first = True
-#    for i in allPossible:
-#        ok = checkForPortia2(i)
-#        if ! ok continue
-#        results = resultsForPortia2(i)  
-#        counter += len(results)
-#        for j in results:
-#            if not first:
-#                result += ","
-#                result += "\n"
-#            first = False
-#            result += "\t"
-#            result += json(j, counter)
-#    result += "\n]"
-#    print("generated " + str(counter) + " puzzles")
-#    return result;
+def generateAllPuzzlesPortia3(n):
+    cp = casketPointers(n)
+    allPossible = allSequences(n, cp)
+    counter = 0
+    result = "[\n"
+    first = True
+    for i in allPossible:
+        results = checkForPortia3(i)  
+        for j in results:
+            if not first:
+                result += ","
+                result += "\n"
+            first = False
+            result += "\t"
+            counter += 1
+            result += json3(j, counter)
+    result += "\n]"
+    print("generated " + str(counter) + " puzzles")
+    return result;
 
 
 #
@@ -315,4 +417,10 @@ f.write(generateAllPuzzlesPortia2(3))
 f.close()
 print(' --- completed writing out Portia II data.')
 print('-------------------------------------')
-
+print("Generating Portia III data.")
+print(' --- creating file ../data/portia3.json')
+f = open("../data/portia3.json","w")
+f.write(generateAllPuzzlesPortia3(3))
+f.close()
+print(' --- completed writing out Portia III data.')
+print('-------------------------------------')

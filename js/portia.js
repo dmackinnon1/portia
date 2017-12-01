@@ -18,14 +18,32 @@ function portiaICasketText(pointerArray) {
 	return text;
 }
 
-function portiaIRiddleText(truths) {
+function textForVersion() {
+	let text = "";
+	if (portia.version === 1) {
+		text = "Portia I invites the user to choose the casket concealing the "
+		text += "portrait based on knowing the overall number of true statements on the caskets."
+	} else if (portia.version === 2) {
+		text = "The caskets from Portia II have two inscriptions instead of just one. "
+		text += "Casket selection is based on knowing the distribution of true statements among the caskets.";
+	} else {
+		text = "Portia III introduces the casket makers Bellini and Cellini. Bellini’s inscriptions are always "
+		text += "true, and Cellini’s are always false. Once you determine which caskets were made by whom, the "
+		text += "inscriptions will lead the way to the portrait."
+	}
+	return text;
+}
+
+function portiaIRiddleText(p) {
+	let truths = p.truths
 	if (portia.version == 1) {
 		let t = parseInt(truths);
-		if (t === 0) {
-			return "All statements on the caskets are false.";
-		} if (t === 1) {
-			return "Of all the statments on the caskets, only one is true.";
-		}
+		if (t === 0) return "All statements on the caskets are false.";
+		if (t === 3) return "All statements on the caskets are true.";
+		
+		if (p.position === "max") return "There are at least " + truths + " true statements on the caskets.";
+		if (p.position === "min") return "There are at most " + truths + " true statements on the caskets.";
+		if (t === 1) return "Of all the statments on the caskets, only one is true.";		
 		return "There are " + truths + " true statements on the caskets."
 	} else if (portia.version == 2) {
 		text = "";
@@ -58,10 +76,13 @@ function portiaIRiddleText(truths) {
 			text += "There are " + twoCount + " caskets with two true statements. "			
 		}
 		return text;
+	} else if (portia.version == 3) {
+		return "Caskets made by Bellini have true inscriptions, <br> caskets made by Cellini have false inscriptions."
 	}
 }
 
-function htmlforCakets(pointerArray) {
+function htmlforCakets(p) {
+	let pointerArray = p.caskets;
 	let html = "<table>";
 	html += "<tr>"
 	let txt = [];
@@ -71,6 +92,12 @@ function htmlforCakets(pointerArray) {
 		let txt1 = portiaICasketText(pointerArray[0]);
 		let txt2 = portiaICasketText(pointerArray[1]);
 		let x = 0;
+		for (x in txt1){
+			txt.push(txt1[x] + "<br>" + txt2[x])
+		}
+	} else if (portia.version == 3){
+		let txt1 = portiaICasketText(pointerArray[0]);
+		let txt2 = belliniCelliniCasket(pointerArray[1], p.truths);
 		for (x in txt1){
 			txt.push(txt1[x] + "<br>" + txt2[x])
 		}
@@ -93,6 +120,37 @@ function htmlforCakets(pointerArray) {
 	}
 	html += "</tr></table>";
 	return html;
+}
+
+function belliniCelliniCasket(pointers, truths) {
+	let results = [];
+	let i = 0;
+	for (i in pointers) {
+		let target = pointers[i];
+		let isSympathy = false;
+		if (target < 0){
+			isSympathy = true;
+			target = -1*target;
+		}
+		let sourceT = truths[i];
+		let targetT = truths[target-1];
+		let text = "";
+		if (isSympathy){
+			if (targetT===1) {
+				text = "Fashioned by the same maker as " + target + ".";
+			} else {
+				text = "Fashioned by a different maker than " + target +".";
+			}
+		} else {
+			if (sourceT === targetT) {
+				text = "Casket " + target + " is made by Bellini.";	
+			} else {
+				text = "Casket " + target + " is made by Cellini.";
+			}
+		}
+		results.push(text);
+	}
+	return results;
 }
 
 function htmlForButton(index) {
@@ -122,7 +180,6 @@ function cellClick(event) {
 	updateResult();
 }
 
-
 function updateResult(){
 	if (portia.answered) {
 		display.result.innerHTML = solutionText();
@@ -141,6 +198,8 @@ function solutionText() {
 }
 
 function textForPointer(pointer, currentIndex) {
+	let selfNegative = ["The portrait is not in this casket.", "The portrait is not in here.","This casket is empty."];
+	let selfPositive = ["The portrait is in this casket.", "The portrait is in here.","This casket has the portriat."]
 	let p = pointer;
 	let negative = false;
 	if (pointer < 0) {
@@ -149,9 +208,9 @@ function textForPointer(pointer, currentIndex) {
 	}
 	if (p === currentIndex){
 		if (negative){
-			return "The portrait is not in this casket.";
+			return randomElement(selfNegative);
 		} else {
-			return "The portrait is in this casket.";
+			return randomElement(selfPositive);
 		}
 	}
 	if (negative){
