@@ -53,6 +53,7 @@ th, td {
 let portia1_puzzles = [];
 let portia2_puzzles = [];
 let portia3_puzzles = [];
+//load data
 $(document).ready(function(){
 	console.log("about to fetch remote data");
 	$.getJSON("data/portia2.json", function(data){
@@ -67,20 +68,27 @@ $(document).ready(function(){
 		reset();
 	});
 });
-
+//initialize display
 $(document).ready(function(){
 	console.log('initializing controllers');
+	//initialize buttons
 	$("#resetButton").on("click", function(){
 		reset();
 	});
-	/*
-	$("#reasoningButton").on("click", function(){
-		showSolution();
+	$('.puzzleTypeBtn').on("click", function(event){
+		portia.version = parseInt(event.currentTarget.id);
+		console.log("portia puzzle type: " + portia.version);
+		setButtons();
+		reset();
 	});
-	*/	
+	//setup display
 	display.result = document.getElementById("solutionDisplay");
+	display.versionDescription = document.getElementById("versionDescription");
+	display.puzzleDescription =  document.getElementById("puzzleDescription");
+	display.casketDisplay =  document.getElementById("caskDisplay");	
 });
 
+//additional functions
 function setButtons() {
 		$(".btn-primary").addClass("btn-secondary");
 		$(".btn-primary").removeClass("btn-primary");
@@ -88,37 +96,12 @@ function setButtons() {
 		$("#" + portia.version).removeClass("btn-secondary");
 		};
 
-$(document).ready(function(){	
-	$('.puzzleTypeBtn').on("click", function(event){
-		portia.version = parseInt(event.currentTarget.id);
-		console.log("portia puzzle type: " + portia.version);
-		setButtons();
-		reset();
-	});
-});
-
-function formatPuzzle(p) {
-	console.log(p);
-	let vd = document.getElementById("versionDescription");
-	let pd =  document.getElementById("puzzleDescription");
-	let cd =  document.getElementById("caskDisplay");
-	vd.innerHTML = textForVersion();
-	let text = "<br>";
-	text += portiaIRiddleText(p);
-	text += "<br>";
-	pd.innerHTML = text;
-	let text2 = htmlforCakets(p);
-	text2 += "<em><small>" + p.id + "</small></em>";
-	cd.innerHTML = text2;
-}
-
-/*
-function showSolution() {
-	let rd = document.getElementById("reasoningDisplay");
-	rd.innerHTML = "The portrait is in casket " + portia.selected.solution +".";
-}
-*/
 function reset() {
+	selectPuzzle();
+	puzzleReset();
+}
+
+function selectPuzzle() {
 	if (portia.version === 1){
 		portia.puzzles = portia1_puzzles;
 	} else if (portia.version === 2){
@@ -126,11 +109,6 @@ function reset() {
 	} else {
 		portia.puzzles = portia3_puzzles;
 	}
-	portia.selected = randomElement(portia.puzzles);
-	formatPuzzle(portia.selected);	
-	portia.answered = false;
-	portia.chosen = -1;
-	updateResult();
 }
 
 </script>
@@ -159,8 +137,8 @@ function reset() {
 	</div> 		
 
 	<p>
-	In Shakespeare's <em>The Merchant of Venice</em>, Portia vetted her suitors by asking them to uncover which of three caskets concealed her portrait. Inscriptions on the caskets presented conondrums to test the virtue of potential mates. In the classic <em>What is the Name of this Book?</em> logician Raymond Smullyan imagined several generations of clever Portias, who presented potential suitors with caskets inscribed with logic puzzles whose solutions provided the key to locating the hidden portrait.
-	Our Portias are friendly algorithms that spend their time generating logic puzzles for your enjoyment.  
+	In Shakespeare's <em>The Merchant of Venice</em>, Portia vetted her suitors by asking them to uncover which of three caskets concealed her portrait. Inscriptions on the caskets presented riddles that tested the virtue of potential partners. In the classic <em>What is the Name of this Book?</em> logician Raymond Smullyan imagined several generations of clever Portias, who presented suitors with caskets inscribed with logic puzzles whose solutions led to locating the hidden portrait.
+	Our Portias are friendly algorithms that spend their time generating logic puzzles for your enjoyment; no offers of marriage are on the table.  
 	</p>
 	<br>
 	<p>
@@ -182,13 +160,6 @@ function reset() {
 	<div id="caskDisplay" class="centered" style="text-align=center"></div>
 	<br>
 	<div id="solutionDisplay" class="puzzle-text centered"></div>	
-	<!--
-	<hr>
-	<div id="reasoningButtonHolder">
-		<button type="button" id="reasoningButton" class="btn btn-secondary typeButton">Show Reasoning</span></button>
-	</div>
-	<div id="reasoningDisplay"></div>
-	-->
 	<hr>
 	<div id="resetButtonHolder">
 		<button type="button" id="resetButton", class="btn btn-secondary typeButton">New Puzzle</span></button>

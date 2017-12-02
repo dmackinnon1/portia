@@ -1,13 +1,42 @@
 
+// The portia object tracks the status of the selected puzzle
 let portia = {};
 portia.puzzles = [];
-portia.selected = null;
+portia.selected = null; //the puzzle selected for the user
 portia.answered = false;
-portia.chosen = -1;
+portia.chosen = -1; //the chosen casket
 portia.version = 1;
 
+// UI must initialize display elements
 let display = {};
 display.result = null;
+display.versionDescription = null;
+display.puzzleDescription = null;
+display.casketDisplay = null;
+
+//--- functions for displaying puzzle elements ----
+function formatPuzzle(p) {
+	console.log(p);
+	let vd = display.versionDescription;
+	let pd = display.puzzleDescription;
+	let cd =  display.casketDisplay;
+	vd.innerHTML = textForVersion();
+	let text = "<br>";
+	text += portiaIRiddleText(p);
+	text += "<br>";
+	pd.innerHTML = text;
+	let text2 = htmlforCakets(p);
+	text2 += "<em><small>" + p.id + "</small></em>";
+	cd.innerHTML = text2;
+}
+
+function puzzleReset() {
+	portia.selected = randomElement(portia.puzzles);
+	formatPuzzle(portia.selected);	
+	portia.answered = false;
+	portia.chosen = -1;
+	updateResult();
+}
 
 function portiaICasketText(pointerArray) {
 	let text = [];

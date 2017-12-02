@@ -1,11 +1,15 @@
 import random
 #
 # Functions for generating Portia Casket puzzles and solutions.
-# run script to generate portia_data.json
+# run script to generate json files for all puzzle types
 #
 
-#-------------------------
-# a range of possible 'pointers' to caskets
+
+#-------------------
+
+# A range of possible 'pointers' to caskets - all possible +/- values on n integers
+# used by generateAllPuzzlesPortia1, generateAllPuzzlesPortia2, generateAllPuzzlesPortia3
+# portia 1, portia 2, portia 3
 def casketPointers(n):
     pointers = []
     for i in range(n):
@@ -13,15 +17,8 @@ def casketPointers(n):
         pointers.append(-1*(i+1))
     return pointers
 
-# generates a random puzzle statement, might not be valid
-def randomCasketSequence(n):
-    cp = casketPointers(n)
-    pointerSequence =[]
-    for i in range(n):
-        pointerSequence.append(random.choice(cp))
-    return pointerSequence
-
-# array of casket labels
+# generates array of casket lables
+# used in portia 1, portia 2, portia 3
 def caskets(n):
     c = []
     for i in range(n):
@@ -31,6 +28,7 @@ def caskets(n):
 # A truth sequence records how many of the statements
 # are true if the portrait is in a given position.
 # this initializes the sequence.
+# used by truthForPointers, portia 1
 def initialTruthSequence(n):
     t = []
     for i in range(n):
@@ -43,6 +41,7 @@ def initialTruthSequence(n):
 # for each position in the truth sequence,
 # it is the count of how many pointers
 # are true if the portrait is in that position.
+# used in checkForPortia1, portia 1
 def truthForPointers(pointerSequence):
     n = len(pointerSequence)
     c = caskets(n)
@@ -52,6 +51,7 @@ def truthForPointers(pointerSequence):
             truthSequence[i-1] += truthAtPointer(i,j)
     return truthSequence
 
+# used by truthForPointers
 def truthAtPointer(p, pointer):
     if p == pointer :
         return 1
@@ -60,7 +60,7 @@ def truthAtPointer(p, pointer):
             return 1        
     return 0
 
-
+# used by truthForPointers
 def truthSequence(p, pointers):
 	n = len(pointers)
 	seq = []
@@ -70,12 +70,13 @@ def truthSequence(p, pointers):
 
 # checks to see of all truth counts
 # are distinct
-def allDistinct(truthSequence):
-    reduced = set(truthSequence)
-    return len(reduced) == len(truthSequence)
+#def allDistinct(truthSequence):
+#    reduced = set(truthSequence)
+#    return len(reduced) == len(truthSequence)
 
 # in portia2, we want to know how many true statements
 # are on each casket for a given position
+# used by checkForPortia2, portia 2
 def truthForPointers2(pointerSequence1, pointerSequence2):
     n = len(pointerSequence1)
     c = caskets(n)
@@ -87,24 +88,28 @@ def truthForPointers2(pointerSequence1, pointerSequence2):
             truthCount += truthAtPointer(i, pointerSequence2[j])
             truthAti.append(truthCount)
         truthVector.append(truthAti)
-    #print(truthVector)
     return truthVector
 
-def isDerrangement(v1, v2):
+# used by noPermutationInList, portia 2
+def isPermutation(v1, v2):
     count = 0;
     for i in v1:
         if i in v2:
             count += 1
     return count == len(v1)        
 
-def notDerrangementInList(d, list):
+# used by portia 2 to ensure that the truth distributions
+# are unique. ie. we can't have a puzzle with truths (1, 0, 2) and (2, 1, 0)
+# used in checkForPortia2, portia 2
+def noPermutationInList(d, list):
     for c in list:
-        if isDerrangement(d,c):
+        if isPermutation(d,c):
             return False 
     return True
 
-# checks to see which truth counts
-# are distinct
+# Looks for distinct truth counts within truth sequence.
+# used in portia 1 for evaluating/generating solvable puzzles.
+# used by checkForPortia1, portia 1
 def whichDistinct(truthSequence):
     distinct = []
     position = 0
@@ -119,21 +124,11 @@ def whichDistinct(truthSequence):
             distinct.append(position)
     return distinct
 
-def printCasketStatements(caskets):
-    output = ""
-    for i in caskets:
-        if i > 0:
-            output += "[the portrait is in "
-            output += str(i)
-            output += "]"
-        if i < 0:
-            output += "[the portrait is not in "
-            output += str(-1*i)
-            output += "]"
-    print(output);
 
-# a set of 3 tuples are returned
-# the three tuples include 1 caskets, 2 #truths, 1 postion
+# For a given set of statement pointers, generates all possible portia 1 puzzles
+# A valid portia 1 puzzle is one with a unique truth count among all puzzles with the same
+# statement pointers. At most 3 valid statements are available, but there could be none.
+# used by generateAllPuzzlesPortia1, portia 1
 def checkForPortia1(pointers):
     t = truthForPointers(pointers)
     d = whichDistinct(t)
@@ -149,11 +144,21 @@ def checkForPortia1(pointers):
         results.append(p)    
     return results
 
+# Checks a truth count against other possible truth counts
+# Used in portia 1 to be able to make assertions like 'at least one is true'
+# used by checkForPortia1, portia 1
 def positionalTruth(c, t): 
 	if c == min(t): return "min" 
 	if c == max(t): return "max"
 	return "mid"
 
+
+# In portia 3, we need to ensure that the 
+# location of the portrait is either directly mentioned
+# or that the remaining cakets are ruled out.
+# This method checks for a given location of the portrait (i) that one of those
+# conditions hold.
+# used by pointerList portia 3 
 def hasPointer(i, pointers) :
 	for j in pointers:
 		if i == j : return True
@@ -164,6 +169,9 @@ def hasPointer(i, pointers) :
 	if len(set(a)) >1 : return True
 	return False; 
 
+# generates list of locations where a given pointer list
+# will generate a valid puzzle according to portia 3 requirements
+# used by checkForPortia3 portia 3
 def pointerList(pointers) :
 	n = len(pointers)
 	c = caskets(n)
@@ -172,7 +180,13 @@ def pointerList(pointers) :
 		if hasPointer(i, pointers):
 			results.append(i)
 	return results
-		
+
+# Will generate valid portia 3 puzzle definitions based on a
+# given pointer sequence.
+# first it generates all valid sets of first statements
+# then for each it generates a valid sets of 'bellini cellini' statmeents
+# using a simple belini-cellini statement topology
+# used by generateAllPuzzlesPortia3 portia 3	
 def checkForPortia3(pointers):
     l = pointerList(pointers)
     results = []
@@ -187,17 +201,20 @@ def checkForPortia3(pointers):
         	results.append(p)    
     return results
 
-
+# Generates solvavble portia2 puzzles from a given input of casket pointers
+# will return an empty list if no puzzles are possible, or a list of 
+# puzzle lists. Each solution generates a truth array - valid puzzles correspond to 
+# unique truth distributions.
+# used by generateAllPuzzlesPortia2 portia 2
 def checkForPortia2(casketTuple):
     casketSet1 = casketTuple[0]
     casketSet2 = casketTuple[1]
-    #print(casketTuple)
     solutionList = []
     t = truthForPointers2(casketSet1, casketSet2)
     for i in range(len(t)) :
         remaining = list(t)
         remaining.remove(t[i])
-        if notDerrangementInList(t[i],remaining):
+        if noPermutationInList(t[i],remaining):
             solutionList.append(i)
     results = []    
     for i in solutionList:
@@ -208,16 +225,8 @@ def checkForPortia2(casketTuple):
         results.append(p)
     return results
 
-def printPuzzle(results):
-    print("----- puzzle -----")
-    caskets = results[0]
-    truths = results[1]
-    position = results[2]
-    print("There are " + str(len(caskets)) + " caskets with these inscriptions:")
-    printCasketStatements(caskets)
-    print("There are exactly " + str(truths) + " true inscriptions.")
-    print("   solution: The portrait is in  casket " + str(position))
-
+# formats portia 1 puzzles for output
+# used by generateAllPuzzlesPortia3 portia 1
 def json(puzzleDef, counter):
     result  = "{\"caskets\": "
     result += str(puzzleDef[0])
@@ -227,6 +236,8 @@ def json(puzzleDef, counter):
     result += ", \"id\": " + "\"portia1-" + str(counter)+ "\"}"        
     return result
 
+# formats portia 2 puzzles for output
+# used by generateAllPuzzlesPortia2 portia 2
 def json2(puzzleDef, counter):
     result  = "{\"caskets\": ["
     result += str(puzzleDef[0][0])
@@ -237,6 +248,8 @@ def json2(puzzleDef, counter):
     result += ", \"id\": " + "\"portia2-" + str(counter)+ "\"}"
     return result
 
+# formats portia 3 puzzles for output
+# used by generateAllPuzzlesPortia3 portia 3
 def json3(puzzleDef, counter):
     result  = "{\"caskets\": "
     result += str(puzzleDef[0])
@@ -245,10 +258,11 @@ def json3(puzzleDef, counter):
     result += ", \"id\": " + "\"portia3-" + str(counter)+ "\"}"        
     return result
 
-
-
-# generates all sequences of length n using elements from
-# the provided list
+# recursively generates all sequences of length n using elements from
+# the provided list. Used in all portias to generate the list of 'casket pointers'
+# which correspond to the core statements.
+# used by: allNoMatchSequencePairs, generateAllPuzzlesPortia3, generateAllPuzzlesPortia1
+# 	portia 1, portia 2, portia 3
 def allSequences(n, elements):
     if n == 0 :
         return [];
@@ -261,6 +275,8 @@ def allSequences(n, elements):
         return sequences
     return appendTo(elements, allSequences(n-1,elements))
 
+# helper function for allSequences
+# used by: allSequences, portia 1, portia 2, portia 3
 def appendTo(elements, listOfLists):    
     newList = []
     for i in elements:
@@ -270,6 +286,11 @@ def appendTo(elements, listOfLists):
             newList.append(nl)
     return newList
 
+# generates all pairs of sequences of n elements that
+# do not have the same element in the same position.
+# Portia 2 uses this to ensure that there are not duplicate statements
+# on the same casket.
+# used by: generateAllPuzzlesPortia2 porita 2
 def allNoMatchSequencePairs(n, elements): 
     pairs = []
     sequences = allSequences(n, elements)
@@ -281,6 +302,7 @@ def allNoMatchSequencePairs(n, elements):
                 pairs.append((s,t))
     return pairs
 
+# used by: allNoMatchSequencePairs, portia 2
 def noMatch(l1, l2):
     result = True
     for i in range(len(l1)) :
@@ -288,6 +310,12 @@ def noMatch(l1, l2):
             result = False 
     return result
 
+# returns a 'derranged cycle' on n elements
+# a permutation of (1, 2, ... n) such that no element is in its 
+# original position, and the permutation is a cycle.
+# Used to create a simple 'bellini/cellini' network of statements that will
+# either be 'sympathy/antipathy' statements or 'accusation/affirmation' statements
+# used by: portia 3
 def belliniCellini1(n): 
 	c = caskets(n)
 	result = []
@@ -313,6 +341,12 @@ def belliniCellini1(n):
 			final.append(i)
 	return final
 
+
+# For each input, return a set of sequences the same as the input, except that
+# in each returned, -1* the corresponding element in the input.
+# Used to select one statement pointer as a 'sympathy/antipathy' statement
+# While the others remain 'accusation/affiermation' statements
+# used by: portia 3
 def negateOnePerSequence(sequences):
 	result = []
 	for s in sequences:
@@ -322,16 +356,18 @@ def negateOnePerSequence(sequences):
 			result.append(r)
 	return result;
 
+# utility function - remove all of one collection from another
+# used by: belliniCellini1 in portia3
 def removeAll(p,d):
 	q = p[:]
 	for i in d:
 		removeIfPresent(q,i)
 	return q	
 
+# used by: removeAll in portia 3
 def removeIfPresent(p,i):
 	if i in p: p.remove(i)
 	return p
-
 
 # will generate all puzzles on n caskets for Portia I                          
 def generateAllPuzzlesPortia1(n):
@@ -398,29 +434,28 @@ def generateAllPuzzlesPortia3(n):
     print("generated " + str(counter) + " puzzles")
     return result;
 
-
 #
-# using the puzzle generator
+# Puzzle Generator
 #
-print('-------------------------------------')
+print('-------------------------------------------')
 print('Generating Portia I data.')
 print(' --- creating file ../data/portia1.json')
 f = open("../data/portia1.json","w")
 f.write(generateAllPuzzlesPortia1(3))
 f.close()
 print(' --- completed writing out Portia I data.')
-print('-------------------------------------')
+print('-------------------------------------------')
 print("Generating Portia II data.")
 print(' --- creating file ../data/portia2.json')
 f = open("../data/portia2.json","w")
 f.write(generateAllPuzzlesPortia2(3))
 f.close()
 print(' --- completed writing out Portia II data.')
-print('-------------------------------------')
+print('-------------------------------------------')
 print("Generating Portia III data.")
 print(' --- creating file ../data/portia3.json')
 f = open("../data/portia3.json","w")
 f.write(generateAllPuzzlesPortia3(3))
 f.close()
 print(' --- completed writing out Portia III data.')
-print('-------------------------------------')
+print('-------------------------------------------')
