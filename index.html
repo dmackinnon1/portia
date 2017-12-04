@@ -13,43 +13,37 @@
 <style>
 
 ul {
-	padding-left: 40px;
-
-	list-style-type: none;
+    padding-left: 40px;
+    list-style-type: none;
 }
 
 li {
-	padding-bottom: 10px;
+    padding-bottom: 10px;
 }
-
 table, tr {
-	padding: 4px;
-	text-align: center;
+    padding: 4px;
+    text-align: center;
     border: 1px solid black;
     border-collapse: collapse; 
     margin: auto;
 }
-
 th, td {
-	padding: 10px;
+    padding: 10px;
 }
-
 .buttonDiv {
-	display: inline-block;
-	padding: 2px;
-	border: 2px;
+    display: inline-block;
+    padding: 2px;
+    border: 2px;
 }
 .centered {
-	text-align: center;
+    text-align: center;
 }
-
 .puzzle-text {
-	font-style: italic;
-	font-size: large;
+    font-style: italic;
+    font-size: large;
 }
 </style>
 <script>
-
 let portia1_puzzles = [];
 let portia2_puzzles = [];
 let portia3_puzzles = [];
@@ -90,16 +84,16 @@ $(document).ready(function(){
 
 //additional functions
 function setButtons() {
-		$(".btn-primary").addClass("btn-secondary");
-		$(".btn-primary").removeClass("btn-primary");
-		$("#" + portia.version).addClass("btn-primary");
-		$("#" + portia.version).removeClass("btn-secondary");
-		};
+	$(".btn-primary").addClass("btn-secondary");
+	$(".btn-primary").removeClass("btn-primary");
+	$("#" + portia.version).addClass("btn-primary");
+	$("#" + portia.version).removeClass("btn-secondary");
+};
 
 function reset() {
 	selectPuzzle();
 	puzzleReset();
-}
+};
 
 function selectPuzzle() {
 	if (portia.version === 1){
@@ -109,8 +103,7 @@ function selectPuzzle() {
 	} else {
 		portia.puzzles = portia3_puzzles;
 	}
-}
-
+};
 </script>
 
 <body>
@@ -137,8 +130,13 @@ function selectPuzzle() {
 	</div> 		
 
 	<p>
-	In Shakespeare's <em>The Merchant of Venice</em>, Portia vetted her suitors by asking them to uncover which of three caskets concealed her portrait. Inscriptions on the caskets presented riddles that tested the virtue of potential partners. In the classic <em>What is the Name of this Book?</em> logician Raymond Smullyan imagined several generations of clever Portias, who presented suitors with caskets inscribed with logic puzzles whose solutions led to locating the hidden portrait.
-	Our Portias are friendly algorithms that spend their time generating logic puzzles for your enjoyment; no offers of marriage are on the table.  
+	In Shakespeare's <em>The Merchant of Venice</em>, Portia vetted her suitors by asking them to uncover which of 
+	three caskets concealed her portrait, while inscriptions on the caskets presented riddles that tested the virtue of her 
+	potential partners.  In the classic <em>What is the Name of this Book?</em> logician Raymond Smullyan imagined 
+	several generations of clever Portias presenting suitors with caskets inscribed with statements that together formed a 
+	logic puzzles whose solution would lead to the portrait.
+	Our Portias are friendly algorithms that spend their time generating logic puzzles for your enjoyment; no offers of 
+	marriage are on the table. Your goal is to select the correct casket based on the clues presented by the casket inscriptions.
 	</p>
 	<br>
 	<p>
