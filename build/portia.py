@@ -2,38 +2,25 @@ import random
 #
 # Functions for generating Portia Casket puzzles and solutions.
 # run script to generate json files for all puzzle types
-#
-
-
 #-------------------
 
 # A range of possible 'pointers' to caskets - all possible +/- values on n integers
 # used by generateAllPuzzlesPortia1, generateAllPuzzlesPortia2, generateAllPuzzlesPortia3
 # portia 1, portia 2, portia 3
 def casketPointers(n):
-    pointers = []
-    for i in range(n):
-        pointers.append(i+1)
-        pointers.append(-1*(i+1))
-    return pointers
+    return [i+1 for i in range(n)] + [-1*(i+1) for i in range(n)]
 
 # generates array of casket lables
 # used in portia 1, portia 2, portia 3
 def caskets(n):
-    c = []
-    for i in range(n):
-        c.append(i+1)
-    return c
+    return [i+1 for i in range(n)]
 
 # A truth sequence records how many of the statements
 # are true if the portrait is in a given position.
 # this initializes the sequence.
 # used by truthForPointers, portia 1
 def initialTruthSequence(n):
-    t = []
-    for i in range(n):
-        t.append(0)
-    return t
+    return [0 for i in range(n)]
 
 # this computes the truth sequence for
 # a given list of casket pointers
@@ -60,19 +47,10 @@ def truthAtPointer(p, pointer):
             return 1        
     return 0
 
-# used by truthForPointers
+# used by checkForPortia3, portia 3
 def truthSequence(p, pointers):
-	n = len(pointers)
-	seq = []
-	for i in pointers:
-		seq.append(truthAtPointer(p, i))
-	return seq
-
-# checks to see of all truth counts
-# are distinct
-#def allDistinct(truthSequence):
-#    reduced = set(truthSequence)
-#    return len(reduced) == len(truthSequence)
+    return [truthAtPointer(p, i) for i in pointers]
+    
 
 # in portia2, we want to know how many true statements
 # are on each casket for a given position
@@ -148,9 +126,9 @@ def checkForPortia1(pointers):
 # Used in portia 1 to be able to make assertions like 'at least one is true'
 # used by checkForPortia1, portia 1
 def positionalTruth(c, t): 
-	if c == min(t): return "min" 
-	if c == max(t): return "max"
-	return "mid"
+    if c == min(t): return "min" 
+    if c == max(t): return "max"
+    return "mid"
 
 
 # In portia 3, we need to ensure that the 
@@ -160,45 +138,45 @@ def positionalTruth(c, t):
 # conditions hold.
 # used by pointerList portia 3 
 def hasPointer(i, pointers) :
-	for j in pointers:
-		if i == j : return True
-		if i == -1*j : return True
-	a = []
-	for j in pointers:
-		a.append(abs(j))
-	if len(set(a)) >1 : return True
-	return False; 
+    for j in pointers:
+        if i == j : return True
+        if i == -1*j : return True
+    a = []
+    for j in pointers:
+        a.append(abs(j))
+    if len(set(a)) >1 : return True
+    return False; 
 
 # generates list of locations where a given pointer list
 # will generate a valid puzzle according to portia 3 requirements
 # used by checkForPortia3 portia 3
 def pointerList(pointers) :
-	n = len(pointers)
-	c = caskets(n)
-	results = []
-	for i in c:
-		if hasPointer(i, pointers):
-			results.append(i)
-	return results
+    n = len(pointers)
+    c = caskets(n)
+    results = []
+    for i in c:
+        if hasPointer(i, pointers):
+            results.append(i)
+    return results
 
 # Will generate valid portia 3 puzzle definitions based on a
 # given pointer sequence.
 # first it generates all valid sets of first statements
 # then for each it generates a valid sets of 'bellini cellini' statmeents
 # using a simple belini-cellini statement topology
-# used by generateAllPuzzlesPortia3 portia 3	
+# used by generateAllPuzzlesPortia3 portia 3    
 def checkForPortia3(pointers):
     l = pointerList(pointers)
     results = []
     if len(l) == 0:
         return results
     for i in l:
-    	for j in negateOnePerSequence(belliniCellini1(len(pointers))):
-        	p = []
-        	p.append([pointers, j])
-        	p.append(truthSequence(i, pointers))
-        	p.append(i)
-        	results.append(p)    
+        for j in negateOnePerSequence(belliniCellini1(len(pointers))):
+            p = []
+            p.append([pointers, j])
+            p.append(truthSequence(i, pointers))
+            p.append(i)
+            results.append(p)    
     return results
 
 # Generates solvavble portia2 puzzles from a given input of casket pointers
@@ -262,7 +240,7 @@ def json3(puzzleDef, counter):
 # the provided list. Used in all portias to generate the list of 'casket pointers'
 # which correspond to the core statements.
 # used by: allNoMatchSequencePairs, generateAllPuzzlesPortia3, generateAllPuzzlesPortia1
-# 	portia 1, portia 2, portia 3
+#   portia 1, portia 2, portia 3
 def allSequences(n, elements):
     if n == 0 :
         return [];
@@ -317,29 +295,29 @@ def noMatch(l1, l2):
 # either be 'sympathy/antipathy' statements or 'accusation/affirmation' statements
 # used by: portia 3
 def belliniCellini1(n): 
-	c = caskets(n)
-	result = []
-	cp = c[1:len(c)]
-	for j in cp:
-		result.append([j])
-	for i in cp:
-		remainders = c[:]
-		newResult = []
-		for k in result:
-			remainderk = removeAll(remainders,k)
-			remainderk = removeIfPresent(remainderk, i)
-			if len(remainderk) == 0:
-				newResult.append(k)
-			for r in remainderk: 
-				p = k[:]
-				p.append(r)
-				newResult.append(p)
-		result = newResult[:]
-	final = []
-	for i in result:
-		if len(i) == n:
-			final.append(i)
-	return final
+    c = caskets(n)
+    result = []
+    cp = c[1:len(c)]
+    for j in cp:
+        result.append([j])
+    for i in cp:
+        remainders = c[:]
+        newResult = []
+        for k in result:
+            remainderk = removeAll(remainders,k)
+            remainderk = removeIfPresent(remainderk, i)
+            if len(remainderk) == 0:
+                newResult.append(k)
+            for r in remainderk: 
+                p = k[:]
+                p.append(r)
+                newResult.append(p)
+        result = newResult[:]
+    final = []
+    for i in result:
+        if len(i) == n:
+            final.append(i)
+    return final
 
 
 # For each input, return a set of sequences the same as the input, except that
@@ -348,26 +326,26 @@ def belliniCellini1(n):
 # While the others remain 'accusation/affiermation' statements
 # used by: portia 3
 def negateOnePerSequence(sequences):
-	result = []
-	for s in sequences:
-		for i in range(len(s)):
-			r = s[:]
-			r[i] = -1*r[i]
-			result.append(r)
-	return result;
+    result = []
+    for s in sequences:
+        for i in range(len(s)):
+            r = s[:]
+            r[i] = -1*r[i]
+            result.append(r)
+    return result;
 
 # utility function - remove all of one collection from another
 # used by: belliniCellini1 in portia3
 def removeAll(p,d):
-	q = p[:]
-	for i in d:
-		removeIfPresent(q,i)
-	return q	
+    q = p[:]
+    for i in d:
+        removeIfPresent(q,i)
+    return q    
 
 # used by: removeAll in portia 3
 def removeIfPresent(p,i):
-	if i in p: p.remove(i)
-	return p
+    if i in p: p.remove(i)
+    return p
 
 # will generate all puzzles on n caskets for Portia I                          
 def generateAllPuzzlesPortia1(n):
