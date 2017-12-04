@@ -106,18 +106,7 @@ def whichDistinct(truthSequence):
 # used by generateAllPuzzlesPortia1, portia 1
 def checkForPortia1(pointers):
     t = truthForPointers(pointers)
-    d = whichDistinct(t)
-    results = []
-    if len(d) == 0:
-        return results
-    for i in d:
-        p = []
-        p.append(pointers)
-        p.append(t[i-1])
-        p.append(i)
-        p.append(positionalTruth(t[i-1],t))
-        results.append(p)    
-    return results
+    return [[pointers, t[i-1],i, positionalTruth(t[i-1],t)] for i in whichDistinct(t)]
 
 # Checks a truth count against other possible truth counts
 # Used in portia 1 to be able to make assertions like 'at least one is true'
@@ -126,7 +115,6 @@ def positionalTruth(c, t):
     if c == min(t): return "min" 
     if c == max(t): return "max"
     return "mid"
-
 
 # In portia 3, we need to ensure that the 
 # location of the portrait is either directly mentioned
