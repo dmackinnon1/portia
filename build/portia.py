@@ -85,23 +85,20 @@ def noPermutationInList(d, list):
             return False 
     return True
 
+# used by isDistinct, portia 1
+def matches(t, sequence):
+    return [1 for i in sequence if i == t]
+
+# used by whichDistinct, portia 1
+def isDistinct(t,sequence):
+    return len(matches(t,sequence)) == 1
+
 # Looks for distinct truth counts within truth sequence.
 # used in portia 1 for evaluating/generating solvable puzzles.
 # used by checkForPortia1, portia 1
 def whichDistinct(truthSequence):
-    distinct = []
-    position = 0
-    for i in truthSequence:       
-        position += 1
-        current = i
-        count = 0
-        for j in truthSequence:
-            if i == j:
-                count +=1
-        if count == 1 :
-            distinct.append(position)
-    return distinct
-
+    indexes = range(len(truthSequence))
+    return [i+1 for i in indexes if isDistinct(truthSequence[i], truthSequence)]
 
 # For a given set of statement pointers, generates all possible portia 1 puzzles
 # A valid portia 1 puzzle is one with a unique truth count among all puzzles with the same
