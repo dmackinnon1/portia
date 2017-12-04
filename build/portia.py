@@ -311,13 +311,12 @@ def belliniCellini1(n):
 # While the others remain 'accusation/affiermation' statements
 # used by: portia 3
 def negateOnePerSequence(sequences):
-    result = []
-    for s in sequences:
-        for i in range(len(s)):
-            r = s[:]
-            r[i] = -1*r[i]
-            result.append(r)
-    return result;
+    return [negateInSequence(i,s) for s in sequences for i in range(len(s))]
+    
+def negateInSequence(i,s):
+    r = s[:]
+    r[i] = -1*r[i]
+    return r
 
 # utility function - remove all of one collection from another
 # used by: belliniCellini1 in portia3
