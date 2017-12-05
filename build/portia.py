@@ -138,11 +138,7 @@ def hasPointer(i, pointers) :
 def pointerList(pointers) :
     n = len(pointers)
     c = caskets(n)
-    results = []
-    for i in c:
-        if hasPointer(i, pointers):
-            results.append(i)
-    return results
+    return [ i for i in c if hasPointer(i, pointers)]
 
 # Will generate valid portia 3 puzzle definitions based on a
 # given pointer sequence.
@@ -155,14 +151,9 @@ def checkForPortia3(pointers):
     results = []
     if len(l) == 0:
         return results
-    for i in l:
-        for j in negateOnePerSequence(belliniCellini1(len(pointers))):
-            p = []
-            p.append([pointers, j])
-            p.append(truthSequence(i, pointers))
-            p.append(i)
-            results.append(p)    
-    return results
+    return [[[pointers, j], truthSequence(i, pointers), i]
+        for i in l
+        for j in negateOnePerSequence(belliniCellini1(len(pointers)))]
 
 # Generates solvavble portia2 puzzles from a given input of casket pointers
 # will return an empty list if no puzzles are possible, or a list of 
@@ -179,14 +170,7 @@ def checkForPortia2(casketTuple):
         remaining.remove(t[i])
         if noPermutationInList(t[i],remaining):
             solutionList.append(i)
-    results = []    
-    for i in solutionList:
-        p = []
-        p.append(casketTuple)
-        p.append(t[i])
-        p.append(i+1)
-        results.append(p)
-    return results
+    return [[casketTuple, t[i], i+1] for i in solutionList]   
 
 # formats portia 1 puzzles for output
 # used by generateAllPuzzlesPortia3 portia 1
@@ -229,25 +213,17 @@ def json3(puzzleDef, counter):
 def allSequences(n, elements):
     if n == 0 :
         return [];
-    if n == 1 :
-        sequences = []
-        for i in elements :
-            temp = []
-            temp.append(i)
-            sequences.append(temp)
-        return sequences
+    if n == 1 :    
+        return [[i] for i in elements]
     return appendTo(elements, allSequences(n-1,elements))
 
-# helper function for allSequences
-# used by: allSequences, portia 1, portia 2, portia 3
-def appendTo(elements, listOfLists):    
-    newList = []
-    for i in elements:
-        for l in listOfLists:
-            nl = list (l)
-            nl.append(i)
-            newList.append(nl)
-    return newList
+def appendTo(elements, listOfLists):
+    return [copyAppend(l,i) for l in listOfLists for i in elements]
+
+def copyAppend(l, i):
+    n = list(l)
+    n.append(i)
+    return n
 
 # generates all pairs of sequences of n elements that
 # do not have the same element in the same position.
