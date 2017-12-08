@@ -56,7 +56,8 @@ function textForVersion() {
 		text = "The caskets from Portia II have two inscriptions instead of just one. "
 		text += "Casket selection is based on knowing the distribution of true statements among the caskets.";
 	} else {
-		text = "Portia III introduces the casket makers Bellini and Cellini. Bellini’s inscriptions are always "
+		text = "All of Portia III's caskets are made either by";
+		text += " Bellini or Cellini, master casket makers. Bellini’s inscriptions are always "
 		text += "true, and Cellini’s are always false. Once you determine which caskets were made by whom, the "
 		text += "inscriptions will lead to the portrait."
 	}
