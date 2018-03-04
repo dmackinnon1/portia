@@ -1,5 +1,5 @@
 # portia
-An interactive version of the classic 'Portia's Caskets' logic puzzle.
+An interactive version of the classic 'Portia's Caskets' logic puzzle. See this [blog post](http://www.mathrecreation.com/2017/12/constructing-portias-caskets.html) for additional details. 
 
 ## Generating puzzle data
 
@@ -28,4 +28,41 @@ generated 3600 puzzles
 -------------------------------------------
 ````
 
+Each puzzle type has its own format:
+
+*Portia 1*
+
+```
+{
+  "caskets": [1,2,2],
+  "truths": 0,
+  "solution": 3,
+  "position": "min",
+  "id": "portia1-20"
+}
+```
+
+*Portia 2*
+```
+{
+  "caskets": [[1,1,3],[-1,-3,-3]],
+  "truths": [1,0,1],
+  "solution": 3,
+  "id": "portia2-358"
+}
+```
+
+*Portia 3*
+
+```
+{
+  "caskets": [[1,1,2],[3,1,-2]],
+  "truths": [0. 0, 0],
+  "solution": 3,
+  "id": "portia3-24"
+}
+```
+
+## Solving the Puzzles
+You can interact with the puzzles using the page **index.html**, a live version of the page is found [here](https://dmackinnon1.github.io/portia/).
 
