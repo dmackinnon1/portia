@@ -11,12 +11,13 @@
 <title>Portia's Caskets</title>
 </head>
 <style>
-
+body {
+	background-color:lightgrey;
+}
 ul {
     padding-left: 40px;
     list-style-type: none;
 }
-
 li {
     padding-bottom: 10px;
 }
@@ -41,6 +42,9 @@ th, td {
 .puzzle-text {
     font-style: italic;
     font-size: large;
+}
+.main-column {
+	background-color:white;
 }
 </style>
 <script>
@@ -123,8 +127,8 @@ function selectPuzzle() {
 
 <div class="container-fluid">
 	<div class='row'>
-	<div class='col-sm-1'></div>
-	<div class='col-sm-10'>
+	<div class='col-sm-0 col-md-1 col-lg-3'></div>
+	<div class='col-sm-12 col-md-10 col-lg-6 main-column'>
 	<div class="page-header">
 		<h1>Portia's Caskets</h1>
 	</div> 		
@@ -164,9 +168,12 @@ function selectPuzzle() {
 	</div>
 	<br>
 	<br>
+	<img src="imgs/casketscene.jpg" style="max-width:100%;max-height:100%" >
+	<br>
+	<br>
 
 </div>
-	<div class='col-sm-1'></div>
+	<div class='col-sm-0 col-md-1 col-lg-3'></div>
 </div>
 
 </div>
