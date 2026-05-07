@@ -1,7 +1,7 @@
 # portia
 In Shakespeare's _The Merchant of Venice,_ Portia tested her suitors by asking them to discover which of three caskets concealed her portrait. Inscriptions on the caskets presented riddles that would challenge the virtue of her potential mates. In his classic _What is the Name of this Book?_ logician Raymond Smullyan, imagined several generations of clever Portias, who presented potential suitors with caskets inscribed with logic puzzles that provided the key to finding her hidden portrait.
 
-On [this page](https://dmackinnon1.github.io/portia/) are ets of puzzles that correspond (roughly) to Smullyan’s first three generations of Portias. This repo contains to code for this page, as well as a work-in-progress LaTeX book version of some of the puzzles.
+On [this page](https://dmackinnon1.github.io/portia/) you can play with sets of puzzles that correspond (roughly) to Smullyan’s first three generations of Portias. This repo contains to code for this page, as well as a work-in-progress LaTeX book version of some of the puzzles.
 
 In these puzzles there are three caskets with statements on them.In "Portia I" each casket has one statement about the location of the portrait. A clue is provided that indicates how many of the statements are true. Solving the puzzle involves determining the placement of the portrait that makes the correct number of statements on the casket true.
 
