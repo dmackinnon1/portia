@@ -1,5 +1,10 @@
 # portia
-An interactive version of the classic 'Portia's Caskets' logic puzzle. See this [blog post](http://www.mathrecreation.com/2017/12/constructing-portias-caskets.html) for additional details. 
+In Shakespeare's _The Merchant of Venice,_ Portia tested her suitors by asking them to discover which of three caskets concealed her portrait. Inscriptions on the caskets presented riddles that would challenge the virtue of her potential mates. In his classic _What is the Name of this Book?_ logician Raymond Smullyan, imagined several generations of clever Portias, who presented potential suitors with caskets inscribed with logic puzzles that provided the key to finding her hidden portrait.
+
+On [this page](https://dmackinnon1.github.io/portia/) are ets of puzzles that correspond (roughly) to Smullyan’s first three generations of Portias. This repo contains to code for this page, as well as a work-in-progress LaTeX book version of some of the puzzles.
+
+In these puzzles there are three caskets with statements on them.In "Portia I" each casket has one statement about the location of the portrait. A clue is provided that indicates how many of the statements are true. Solving the puzzle involves determining the placement of the portrait that makes the correct number of statements on the casket true.
+
 
 ## Generating puzzle data
 
@@ -10,7 +15,6 @@ Ensuring that the directory **/portia/data** is created and writable, the puzzle
 Expected output is:
 
 ````
--------------------------------------------
 Generating Portia I data.
  --- creating file ../data/portia1.json
 generated 348 puzzles
@@ -18,7 +22,7 @@ generated 348 puzzles
 -------------------------------------------
 Generating Portia II data.
  --- creating file ../data/portia2.json
-generated 16152 puzzles
+generated 30480 puzzles
  --- completed writing out Portia II data.
 -------------------------------------------
 Generating Portia III data.
@@ -63,6 +67,10 @@ Each puzzle type has its own format:
 }
 ```
 
-## Solving the Puzzles
-You can interact with the puzzles using the page **index.html**, a live version of the page is found [here](https://dmackinnon1.github.io/portia/).
+## Solving and generating the puzzles
+
+One way to solve problems like this is to work backwards. For each casket, imagine that the portrait is concealed within that casket, then count how many statements would be true. When you find the portrait placement that matches the requirement in the clue (for example, that "at most one is true") you have your solution.
+
+Working backwards also gives us a way to generate puzzles like the "portial 1" puzzles, where each casket has one statement on it and  To generate these puzzles, consider all possible statements on the caskets. Each set of statements gives you three possible puzzles: a puzzle where the portrait is in the gold casket, a puzzle where the portrait is in the silver casket, and a puzzle where it is in the lead casket. To find out if any (or all) of these are valid solvable puzzles, check to see if the portrait placement gives you a 'truth count' that unique within that group of potential puzzles.
+
 
