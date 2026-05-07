@@ -1,4 +1,3 @@
-import random
 #
 # Functions for generating Portia Casket puzzles and solutions.
 # run script to generate json files for all puzzle types
@@ -70,11 +69,7 @@ def truthForPointers2(pointerSequence1, pointerSequence2):
 
 # used by noPermutationInList, portia 2
 def isPermutation(v1, v2):
-    count = 0;
-    for i in v1:
-        if i in v2:
-            count += 1
-    return count == len(v1)        
+    return sorted(v1) == sorted(v2)
 
 # used by portia 2 to ensure that the truth distributions
 # are unique. ie. we can't have a puzzle with truths (1, 0, 2) and (2, 1, 0)
@@ -118,7 +113,7 @@ def positionalTruth(c, t):
 
 # In portia 3, we need to ensure that the 
 # location of the portrait is either directly mentioned
-# or that the remaining cakets are ruled out.
+# or that the remaining caskets are ruled out.
 # This method checks for a given location of the portrait (i) that one of those
 # conditions hold.
 # used by pointerList portia 3 
